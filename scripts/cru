@@ -1,0 +1,55 @@
+#!/bin/ash
+#copyright by monlor
+monlorpath=$(uci -q get monlor.tools.path)
+[ $? -eq 0 ] && source "$monlorpath"/scripts/base.sh || exit 1
+
+method="$1"
+name="$2"
+content="$3"
+cruconf=$monlorpath/config/cru.conf
+[ -z "$method" -o -z "$name" ] && exit 1
+[ ! -f "$cruconf" ] && touch $cruconf
+
+enforce() {
+
+	sed -i "/#monlor-cru/d" /etc/crontabs/root
+	cat $cruconf | cut -d',' -f2 | sed -e 's/.*/& #monlor-cru/g' >> /etc/crontabs/root	
+
+}
+
+add() {
+
+	[ -z "$content" ] && exit 1
+	sed -i "/^$name,/d" $cruconf
+	echo "$name,$content" >> $cruconf
+	enforce
+
+}
+
+del() {
+
+	sed -i "/^$name,/d" $cruconf
+	enforce
+
+}
+
+check() {
+
+	result=$(cat $cruconf | grep -c "^$name,")
+	[ "$result" == '1' ] && echo 0 || echo 1
+
+}
+
+clear() {
+	
+	echo > $cruconf
+	enforce
+
+}
+
+case "$method" in
+	a) add ;;
+	d) del ;;
+	c) check ;;
+	clear) clear ;;
+esac
