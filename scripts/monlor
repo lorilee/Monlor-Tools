@@ -171,7 +171,9 @@ menu() {
 	echo "********************************"
 	echo "  **** Monlor Tools工具箱 ****"
 	echo "********************************"
-	echo "`check_version`"
+	newver=$(cat /tmp/tools_version.txt) > /dev/null 2>&1
+	oldver=$(cat $monlorpath/config/version.txt)
+	echo "当前版本：$oldver 最新版本：$newver"
 	echo 
 	echo "0. 工具箱/插件管理(Ctrl + c退出)"
 	cat $Applist | while read line
@@ -243,12 +245,5 @@ check_update() {
 
 }
 
-check_version() {
-
-	newver=$(cat /tmp/tools_version.txt) > /dev/null 2>&1
-	oldver=$(cat $monlorpath/config/version.txt)
-	echo -n "当前版本：$oldver 最新版本：$newver"
-
-}
 #------------------【Tools】--------------------
 if [ ! -z $param ]; then $param; else menu; fi; #monlor-if
