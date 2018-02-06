@@ -46,7 +46,7 @@ start () {
 	fi
 	[ ! -d "$CONF" ] && mkdir $CONF
 	iptables -I INPUT -p tcp --dport $port -m comment --comment "monlor-$appname" -j ACCEPT 
-	service_start $BIN -home "$CONF" -gui-address http://0.0.0.0:$port -no-browser -no-restart -logflags=0
+	service_start $BIN -home "$CONF" -gui-address http://0.0.0.0:$port -no-browser -logfile=$LOG
 	if [ $? -ne 0 ]; then
         logsh "【$service】" "启动$appname服务失败！"
 		exit

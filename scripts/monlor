@@ -164,6 +164,7 @@ manage() {
 }
 
 menu() {
+	
 	while(true)
 	do
 	i=0;
@@ -184,7 +185,7 @@ menu() {
 		fi
 	done
 	echo
-	[ "$newver" != "$oldver" ] && echo "检测到新版本，输入u即可更新."
+	[ "$newver" != "$oldver" ] && echo "[检测到工具箱新版本，输入u即可更新]"
 	read -p "请输入你的选择(exit退出)：" select
 	echo
 	[ "$select" == "exit" ] && exit
