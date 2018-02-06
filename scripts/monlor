@@ -182,28 +182,37 @@ menu() {
 		fi
 	done
 	echo
+	[ "$newver" != "$oldver" ] && echo "检测到新版本，输入u即可更新."
 	read -p "请输入你的选择(exit退出)：" select
 	echo
 	[ "$select" == "exit" ] && exit
 	[ -z "$select" ] && exit
+	if [ "$select" == 'u' ]; then
+		result=$(curl -skL -w %{http_code} -o /tmp/update.sh $monlorurl/scripts/update.sh)
+		[ "$result" == "200" ] && chmod +x /tmp/update.sh && mv -f /tmp/update.sh $monlorpath/scripts/update.sh && update.sh
+		exit
+	fi
 	if [ `echo $select | grep -c '^[0-9][0-9]*$'` -eq 1 ]; then
 		if [ "$select" == '0' ]; then
 			manage
 		elif [ "$select" -gt '0' ] && [ "$select" -le "$(cat $Applist | wc -l)" ]; then
 			appname=$(cat $Applist | grep -n . | grep -w $select | cut -d: -f2)
-			if [ `checkuci $appname` == '0' ]; then
-				if [ ! -z `check_update $appname` ]; then
-					read -p "是否要更新$appname插件？[1/0] " update
-					[ "$update" == '1' ] && appmanage.sh upgrade $appname 
+			if [ ! -z "$appname" ]; then
+				if [ `checkuci $appname` == '0' ]; then
+					if [ ! -z `check_update $appname` ]; then
+						read -p "是否要更新$appname插件？[1/0] " update
+						[ "$update" == '1' ] && appmanage.sh upgrade $appname 
+					fi
+				else
+					read -p "确定要安装$appname插件？[1/0] " install
+					[ "$install" = '1' ] && appmanage.sh add $appname 
 				fi
-			else
-				read -p "确定要安装$appname插件？[1/0] " install
-				[ "$install" = '1' ] && appmanage.sh add $appname 
+				[ `checkuci $appname` == '0' ] && "$monlorpath"/scripts/monlor $appname && uci commit monlor
+			else 
+				echo "输入有误！"
 			fi
-			[ `checkuci $appname` == '0' ] && "$monlorpath"/scripts/monlor $appname && uci commit monlor
 		else
 			echo "输入有误！"
-			exit
 		fi
 	else
 		echo "输入有误！"

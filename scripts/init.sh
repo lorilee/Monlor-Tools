@@ -48,9 +48,9 @@ if [ "$result" == 0 ]; then
 fi
 
 logsh "【Tools】" "检查定时任务配置"
-cru a monitor "* * * * * $monlorpath/scripts/monitor.sh "
-cru a dayjob "30 5 * * * $monlorpath/scripts/dayjob.sh " 
-cru a getver "*/20 * * * * $monlorpath/scripts/getver.sh"
+$monlorpath/scripts/cru a monitor "* * * * * $monlorpath/scripts/monitor.sh "
+$monlorpath/scripts/cru a dayjob "30 5 * * * $monlorpath/scripts/dayjob.sh " 
+$monlorpath/scripts/cru a getver "*/20 * * * * $monlorpath/scripts/getver.sh"
 
 logsh "【Tools】" "检查工具箱开机启动配置"
 result=$(cat /etc/firewall.user | grep init.sh | wc -l) > /dev/null 2>&1
